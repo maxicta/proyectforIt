@@ -1,35 +1,6 @@
-import { Email } from "../value-objects/Email";
-
-interface UserProps {
-    id: string;
-    email: Email;
-    name: string;
-    phone: string;
-    password: string;
-    createdAt: Date;
-    isVerified: boolean;
-}
-
-class User {
-    public readonly id: string;
-    public readonly email: Email;
-    public readonly name: string;
-    public readonly phone: string;
-    public readonly password: string;
-    public readonly createdAt: Date;
-    public readonly isVerified: boolean;
-
-    constructor(props: UserProps) {
-        this.id = props.id;
-        this.email = props.email;
-        this.name = props.name;
-        this.phone = props.phone;
-        this.password = props.password;
-        this.createdAt = props.createdAt;
-        this.isVerified = props.isVerified;
-    }
-}
-
+import {User} from '../entities/User'
+import { Address } from '../value-objects/Address';
+import { Email } from '../value-objects/Email';
 export class RegisterUserUseCase {
     constructor(
         private readonly userRerpository: IUserRepository,
@@ -54,17 +25,20 @@ export class RegisterUserUseCase {
             throw new Error("El telefono ya se encuentra registrado");
         }
 
+        
+
         const hashedPassword = await this.passWordHasher.hash(password);
 
-        const user = new User({
+        const user : User = {
             id: this.generateId(),
             email: Email.create(email),
             name: name,
             phone: phone,
+            addresses: Address,
             password: hashedPassword,
             createdAt: new Date(),
             isVerified: false,
-        });
+        };
 
         const savedUser = await this.userRerpository.save(user);
 
@@ -104,7 +78,7 @@ export class RegisterUserUseCase {
     }
 
     private generateId(): string {
-        // En producción usarías UUID o similar
+        // implementar generador de id
         return Date.now().toString();
     }
 }
